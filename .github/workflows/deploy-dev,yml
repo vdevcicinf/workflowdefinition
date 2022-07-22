@@ -1,0 +1,26 @@
+name: Deploy Development Snapshot
+
+on:
+  workflow_run:
+    workflows: [ Build ]
+    types: [ completed ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo conclusion
+        run: echo "${{ github.event.workflow_run.conclusion }}"
+      - name: Echo event
+        run: echo "${{ github.event.workflow_run.event }}"
+      - name: Echo status
+        run: echo "${{ github.event.workflow_run.status }}"
+  deploy-dev:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Echo hello
+        run: echo "Hello World"
